@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.ytchannelcli'
+version = '1.0.0'
+
+dependencies {
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:v0.24.8'
+    implementation 'info.picocli:picocli:4.7.5'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
+    implementation 'org.json:json:20231013'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}
+
+application {
+    mainClass = 'com.ytchannelcli.App'
+}
+
+shadowJar {
+    archiveBaseName = 'yt-cli'
+    archiveClassifier = ''
+    archiveVersion = '1.0.0'
+}
+
+compileJava {
+    options.compilerArgs += [
+        '-Aproject=com.ytchannelcli.App'
+    ]
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.ytchannelcli.App'
+        )
+    }
+}
+
+// Task untuk debug API
+task debugAPI(type: JavaExec) {
+    mainClass = 'com.ytchannelcli.DebugAPI'
+    classpath = sourceSets.main.runtimeClasspath
+    
+    // Pass command line arguments
+    if (project.hasProperty('args')) {
+        args project.property('args').split('\\s+')
+    }
+}
